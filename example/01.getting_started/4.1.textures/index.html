@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello</title>
+</head>
+
+<body>
+  <canvas id="canvas" style="width: 500px; height: 500px; border: solid 1px #000;"></canvas>
+  <script type="x-shader/x-vertex" id="J_vertexShader">#version 300 es
+    layout (location = 0) in vec3 aPos; 
+    layout (location = 1) in vec3 aColor;
+    layout (location = 2) in vec2 aTexCoord;
+
+    //out vec3 ourColor; 
+    out vec2 TexCoord;
+
+    void main(){
+      gl_Position = vec4(aPos, 1.0);
+      //ourColor = aColor;
+      TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+    }
+  </script>
+  <script type="x-shader/x-fragment" id="J_fragmentShader">#version 300 es
+    precision highp float;
+    out vec4 FragColor;
+
+    //in vec3 ourColor;
+    in vec2 TexCoord;
+
+    uniform sampler2D texturel;
+    
+    void main(){
+      FragColor = texture(texturel, TexCoord);
+    }
+  </script>
+  <script type="text/javascript">
+    const canvas = document.querySelector("#canvas");
+    const gl = canvas.getContext('webgl2');
+    const vertexShaderSource = document.getElementById('J_vertexShader').innerText;
+    const fragmentShaderSource = document.getElementById('J_fragmentShader').innerText;
+  </script>
+  <script src="../../utils/Shader.js"></script>
+  <script src="../../utils/webgl-utils.js"></script>
+  <script src="4.1.textures.js"></script>
+</body>
+
+</html>
