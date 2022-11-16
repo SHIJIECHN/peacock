@@ -50,7 +50,6 @@ function render(image) {
   gl.bufferData(gl.ARRAY_BUFFER, textureCoords, gl.STATIC_DRAW);
 
   const positionAttributeLocation = gl.getAttribLocation(ourShader.program, 'aPos');
-
   const colorAttributeLocation = gl.getAttribLocation(ourShader.program, 'aColor');
   const texCoordAttributeLocation = gl.getAttribLocation(ourShader.program, 'aTexCoord');
   // uniforms
@@ -72,8 +71,8 @@ function render(image) {
 
   // 创建纹理
   const texture = gl.createTexture();
-  // gl.activeTexture(gl.TEXTURE_2D + 0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
+
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
@@ -99,10 +98,11 @@ function render(image) {
   gl.clear(gl.COLOR_BUFFER_BIT);
   ourShader.use();
   gl.bindVertexArray(vao);
-  console.log(imageLocation);
-  gl.uniform1i(imageLocation, 0);
 
+  gl.activeTexture(gl.TEXTURE0 + 0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.uniform1i(imageLocation, 0);
 
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 

@@ -25,10 +25,10 @@ function main() {
 
   const program = webglUtils.createProgramFromSources(gl, [vs, fs]);
   const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-  // console.log(positionAttributeLocation); // 0
+
+  // look up uniform
   // 获取u_color统一变量的位置
   const colorLocation = gl.getUniformLocation(program, 'u_color');
-  // console.log(colorLocation);// WebGLUniformLocation {}
   // 获取u_matrix统一变量的位置
   const matrixLocation = gl.getUniformLocation(program, 'u_matrix');
 
@@ -53,22 +53,24 @@ function main() {
   const offset = 0;
   gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
 
+  // 执行一个动画，并要求浏览器在下次重绘之前调用指定的回调函数更新动画，
+  // 回调函数会在浏览器下一次重绘之前执行
   requestAnimationFrame(drawScene);
 
+  // 绘制场景
   function drawScene(now) {
-    // 设置画布大小
-    resizeCanvasToDisplay(gl.canvas);
-    // 重置画布尺寸的时候还需要调用gl.viewport设置视域
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    now *= 0.001;
+    resizeCanvasToDisplaySize(gl.canvas);
 
+    // 重置画布大小需要告诉WebGL新的视域设置
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    now *= 0.001; // 转为秒
     gl.useProgram(program);
     gl.bindVertexArray(vao);
-    const matrix = m3.rotation(now);
-    gl.uniformMatrix3fv(matrixLocation, false, matrix);
-
-    gl.uniform4fv(colorLocation, [0, 1, 0, 1]);
-
+    const matrix = m3.rotation(now); // 计算动画矩阵
+    gl.uniformMatrix3fv(matrixLocation, false, matrix); // 给matrixLocation赋值
+    gl.uniform4fv(colorLocation, [1, 0, 0, 1]); // 给colorLocation赋值，画红色
+    // 画线
     const primitiveType = gl.LINES;
     const offset = 0;
     const count = 2;
@@ -77,36 +79,27 @@ function main() {
     requestAnimationFrame(drawScene);
   }
 
-  /**
-   * 调整画布大小与浏览器显示大小相同
-   * @param {*} canvas 
-   * @returns 
-   */
-  function resizeCanvasToDisplay(canvas) {
+
+
+  // 检查该元素正在显示的大小，然后调整绘图缓冲区大小一匹配
+  function resizeCanvasToDisplaySize(canvas) {
     // 获取浏览器显示的画布的CSS像素值
-    // const displayWidth = canvas.clientWidth;
-    // const displayHeight = canvas.clientHeight;
+    const displayWidth = canvas.clientWidth,
+      displayHeight = canvas.clientHeight;
 
-    const dpr = window.devicePixelRatio; // 分辨率
-    // const displayWidth = Math.round(canvas.clientWidth * dpr);
-    // const displayHeight = Math.round(canvas.clientHeight * dpr);
-
-    const { width, height } = canvas.getBoundingClientRect();
-    const displayWidth = Math.round(width * dpr);
-    const displayHeight = Math.round(height * dpr);
+    // console.log(displayWidth, displayHeight); // 浏览器可视窗口的宽高 1258 934
+    // console.log(canvas.width, canvas.height); // 300 150
 
     // 检查画布大小是否相同
-    const needResize = canvas.width !== displayWidth
-      || canvas.height !== displayHeight;
-
+    const needResize = canvas.width !== displayWidth || canvas.height !== displayHeight;
     if (needResize) {
       // 使画布大小相同
       canvas.width = displayWidth;
       canvas.height = displayHeight;
     }
-
     return needResize;
   }
+
 }
 
 main();
