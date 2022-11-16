@@ -69,7 +69,6 @@ function render(image) {
     image
   );
 
-  console.log(canvas.width);
   webglUtils.resizeCanvasToDisplaySize(gl.canvas);
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   gl.clearColor(0, 0, 0, 0);
