@@ -1,8 +1,8 @@
 var image = new Image();
-image.src = './container.jpg';
 image.onload = function () {
   render(image);
 }
+image.src = './container.jpg';
 
 function render(image) {
   const ourShader = new Shader(gl);
@@ -13,24 +13,25 @@ function render(image) {
   // uniforms
   const imageLocation = gl.getUniformLocation(ourShader.program, 'texturel')
 
-  const position = new Float32Array([
-    0.5, 0.5, 0, // 上右
-    0.5, -0.5, 0, // 下右
-    -0.5, -0.5, 0, // 下左
-    -0.5, 0.5, 0 // 上左
+  const vertices = new Float32Array([
+    // position  // color  // texcoord
+    0.5, 0.5, 0, 1, 0, 0, 1, 1,// 上右
+    0.5, -0.5, 0, 0, 1, 0, 1, 0,// 下右
+    -0.5, -0.5, 0, 0, 0, 1, 0, 0,// 下左
+    -0.5, 0.5, 0, 1, 1, 0, 0, 1 // 上左
   ]);
-  const colors = new Float32Array([
-    1, 0, 0,
-    0, 1, 0,
-    0, 0, 1,
-    1, 1, 0
-  ]);
-  const textureCoords = new Float32Array([
-    1, 1,
-    1, 0,
-    0, 0,
-    0, 1
-  ]);
+  // const colors = new Float32Array([
+  //   1, 0, 0,
+  //   0, 1, 0,
+  //   0, 0, 1,
+  //   1, 1, 0
+  // ]);
+  // const textureCoords = new Float32Array([
+  //   1, 1,
+  //   1, 0,
+  //   0, 0,
+  //   0, 1
+  // ]);
 
   const indices = new Int32Array([
     0, 1, 3,
@@ -42,13 +43,14 @@ function render(image) {
 
   const type = gl.FLOAT;
   const normalize = false;
-  const stride = 0;
-  const offset = 0;
+  // const stride = 0;
+  // const offset = 0;
+  const FSIZE = vertices.BYTES_PER_ELEMENT;
   // 位置
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, position, gl.STATIC_DRAW);
-  gl.vertexAttribPointer(positionAttributeLocation, 3, type, normalize, stride, offset);
+  const vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  gl.vertexAttribPointer(positionAttributeLocation, 3, type, normalize, 8 * FSIZE, 0);
   gl.enableVertexAttribArray(positionAttributeLocation);
 
   // 索引
@@ -57,17 +59,17 @@ function render(image) {
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
   // 颜色
-  const colorBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-  gl.vertexAttribPointer(colorAttributeLocation, 3, type, normalize, stride, offset);
+  // const colorBuffer = gl.createBuffer();
+  // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+  gl.vertexAttribPointer(colorAttributeLocation, 3, type, normalize, 8 * FSIZE, 3 * FSIZE);
   gl.enableVertexAttribArray(colorAttributeLocation);
 
   // 纹理坐标
-  const texCoordBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, textureCoords, gl.STATIC_DRAW);
-  gl.vertexAttribPointer(texCoordAttributeLocation, 2, type, normalize, stride, offset);
+  // const texCoordBuffer = gl.createBuffer();
+  // gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, textureCoords, gl.STATIC_DRAW);
+  gl.vertexAttribPointer(texCoordAttributeLocation, 2, type, normalize, 8 * FSIZE, 6 * FSIZE);
   gl.enableVertexAttribArray(texCoordAttributeLocation);
 
   // 创建纹理
@@ -75,24 +77,32 @@ function render(image) {
   gl.activeTexture(gl.TEXTURE0 + 0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
   const mipLevel = 0;
-  const internalFormat = gl.RGB;
-  const srcFormat = gl.RGB;
+  const internalFormat = gl.RGBA;
+  const srcFormat = gl.RGBA;
   const srcType = gl.UNSIGNED_BYTE;
-  gl.texImage2D(gl.TEXTURE_2D,
-    mipLevel,
-    internalFormat,
-    srcFormat,
-    srcType,
-    image
-  );
+  // gl.texImage2D(gl.TEXTURE_2D,
+  //   mipLevel,
+  //   internalFormat,
+  //   srcFormat,
+  //   srcType,
+  //   image
+  // );
 
-  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+  const dp = new Array(image.height * image.width * 4).fill(255);
+  const img = new Uint8Array(dp);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0,
+    gl.RGBA, gl.UNSIGNED_BYTE,
+    img);
+
+  // webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -104,7 +114,9 @@ function render(image) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   gl.uniform1i(imageLocation, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+
+  // gl.drawArrays(gl.TRIANGLES, 0, 4);
 
   gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
 }
