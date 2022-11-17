@@ -6,17 +6,25 @@ image.onload = function () {
 
 function render(image) {
   const ourShader = new Shader(gl);
-  const position = [
+  // 获取属性位置
+  const positionAttributeLocation = gl.getAttribLocation(ourShader.program, 'aPos');
+  const colorAttributeLocation = gl.getAttribLocation(ourShader.program, 'aColor');
+  const texCoordAttributeLocation = gl.getAttribLocation(ourShader.program, 'aTexCoord');
+  // uniforms
+  const imageLocation = gl.getUniformLocation(ourShader.program, 'texturel')
+
+  const position = new Float32Array([
     0.5, 0.5, 0, // 上右
     0.5, -0.5, 0, // 下右
-    - 0.5, -0.5, 0, // 下左
+    -0.5, -0.5, 0, // 下左
     -0.5, 0.5, 0 // 上左
-  ]
-  // const colors = new Float32Array([
-  //   1, 0, 0,
-  //   0, 1, 0,
-  //   0, 0, 1
-  // ]);
+  ]);
+  const colors = new Float32Array([
+    1, 0, 0,
+    0, 1, 0,
+    0, 0, 1,
+    1, 1, 0
+  ]);
   const textureCoords = new Float32Array([
     1, 1,
     1, 0,
@@ -30,47 +38,41 @@ function render(image) {
   ]);
 
   const vao = gl.createVertexArray();
-  const positionBuffer = gl.createBuffer();
-  const ebo = gl.createBuffer();
-  // const colorBuffer = gl.createBuffer();
-  const texCoordBuffer = gl.createBuffer();
-
   gl.bindVertexArray(vao);
-  // 位置
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, position, gl.STATIC_DRAW);
-  // 索引
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-  // 颜色
-  // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  // gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-  // 坐标
-  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, textureCoords, gl.STATIC_DRAW);
-
-  const positionAttributeLocation = gl.getAttribLocation(ourShader.program, 'aPos');
-  const colorAttributeLocation = gl.getAttribLocation(ourShader.program, 'aColor');
-  const texCoordAttributeLocation = gl.getAttribLocation(ourShader.program, 'aTexCoord');
-  // uniforms
-  const imageLocation = gl.getUniformLocation(ourShader.program, 'texturel')
 
   const type = gl.FLOAT;
   const normalize = false;
   const stride = 0;
   const offset = 0;
   // 位置
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, position, gl.STATIC_DRAW);
   gl.vertexAttribPointer(positionAttributeLocation, 3, type, normalize, stride, offset);
   gl.enableVertexAttribArray(positionAttributeLocation);
+
+  // 索引
+  const ebo = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
   // 颜色
+  const colorBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
   gl.vertexAttribPointer(colorAttributeLocation, 3, type, normalize, stride, offset);
   gl.enableVertexAttribArray(colorAttributeLocation);
-  // 纹理
+
+  // 纹理坐标
+  const texCoordBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, textureCoords, gl.STATIC_DRAW);
   gl.vertexAttribPointer(texCoordAttributeLocation, 2, type, normalize, stride, offset);
   gl.enableVertexAttribArray(texCoordAttributeLocation);
 
   // 创建纹理
   const texture = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0 + 0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
@@ -82,29 +84,27 @@ function render(image) {
   const internalFormat = gl.RGB;
   const srcFormat = gl.RGB;
   const srcType = gl.UNSIGNED_BYTE;
-
   gl.texImage2D(gl.TEXTURE_2D,
     mipLevel,
     internalFormat,
-    image.width,
-    image.height,
-    0,
     srcFormat,
     srcType,
     image
   );
-  // gl.generaterMipmap(gl.TEXTURE_2D);
+
+  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
   gl.clearColor(0.2, .3, .3, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
   ourShader.use();
   gl.bindVertexArray(vao);
 
-  gl.activeTexture(gl.TEXTURE0 + 0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
 
   gl.uniform1i(imageLocation, 0);
-
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
   gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
 }

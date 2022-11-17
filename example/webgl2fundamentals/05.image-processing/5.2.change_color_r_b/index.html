@@ -45,7 +45,7 @@
     in vec2 v_texCoord;
     out vec4 outColor;
     void main() {
-      outColor = texture(u_image, v_texCoord);
+      outColor = texture(u_image, v_texCoord).bgra;
     }
   </script>
   <script type="text/javascript">
@@ -57,7 +57,7 @@
   <script src="../../utils/webgl-utils.js"></script>
   <script src="../../utils/webgl-lessons-ui.js"></script>
   <script src="../../utils/m3.js"></script>
-  <script src="5.1.image_processing.js"></script>
+  <script src="5.2.change_color_r_b.js"></script>
 </body>
 
 </html>

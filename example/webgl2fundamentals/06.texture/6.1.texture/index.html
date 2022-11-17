@@ -27,24 +27,32 @@
     in vec2 a_position;
     in vec2 a_texCoord;
 
-    uniform vec2 u_resolution;
+    uniform mat4 u_matrix;
 
+    // 定义一个传递到片段着色器的纹理坐标变量
     out vec2 v_texCoord;
 
     void main() {
-      vec2 zeroToOne = a_position / u_resolution;
-      vec2 zeroToTwo = zeroToOne * 2.0;
-      vec2 clipSpace = zeroToTwo - 1.0;
-      gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+      // 将位置和矩阵相乘
+      gl_Position = u_matrix * a_position;
+
+      // 传递纹理坐标到片段着色器
       v_texCoord = a_texCoord;
     }
   </script>
   <script type="x-shader/x-fragment" id="J_fragmentShader">#version 300 es
     precision highp float;
+
+    // 声明一个sampler2D类型的全局变量, 引用一个纹理
     uniform sampler2D u_image;
+
+    // 从顶点着色器中传入的值
     in vec2 v_texCoord;
+
     out vec4 outColor;
+
     void main() {
+      // 使用从顶点着色器传入的纹理坐标嗲用texture方法, 在纹理上找到对应的颜色
       outColor = texture(u_image, v_texCoord);
     }
   </script>
@@ -57,7 +65,7 @@
   <script src="../../utils/webgl-utils.js"></script>
   <script src="../../utils/webgl-lessons-ui.js"></script>
   <script src="../../utils/m3.js"></script>
-  <script src="5.1.image_processing.js"></script>
+  <script src="6.1.texture.js"></script>
 </body>
 
 </html>
