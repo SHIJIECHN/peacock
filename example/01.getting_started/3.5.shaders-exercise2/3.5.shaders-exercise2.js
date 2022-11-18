@@ -46,7 +46,6 @@ function main() {
   /**
    * 向右偏移0.5
    */
-  ourShader.use();
   const offsetValue = 0.5;
   ourShader.setFloat('xOffset', offsetValue);
 

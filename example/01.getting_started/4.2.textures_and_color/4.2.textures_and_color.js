@@ -28,6 +28,12 @@ async function render(image) {
     console.log('Failed to get the storage location of aTexCoord.');
     return;
   }
+  const colorAttributeLocation = gl.getAttribLocation(ourShader.program, 'aColor');
+  if (colorAttributeLocation < 0) {
+    console.log('Failed to get the storage location of aColor.');
+    return;
+  }
+
   // uniforms
   const imageLocation = gl.getUniformLocation(ourShader.program, 'texturel');
   if (imageLocation < 0) {
@@ -36,11 +42,11 @@ async function render(image) {
   }
   // 顶点位置与纹理坐标
   const vertices = new Float32Array([
-    // position   // texcoord
-    0.5, 0.5, 0, 1, 1,// 上右
-    0.5, -0.5, 0, 1, 0,// 下右
-    -0.5, -0.5, 0, 0, 0,// 下左
-    -0.5, 0.5, 0, 0, 1 // 上左
+    // position  //texcoord // color
+    0.5, 0.5, 0, 1, 1, 1, 0, 0,// 上右
+    0.5, -0.5, 0, 1, 0, 0, 1, 0,// 下右
+    -0.5, -0.5, 0, 0, 0, 0, 0, 1,// 下左
+    -0.5, 0.5, 0, 0, 1, 1, 1, 0 // 上左
   ]);
   // 索引
   const indices = new Int32Array([
@@ -58,12 +64,14 @@ async function render(image) {
   const vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-  gl.vertexAttribPointer(positionAttributeLocation, 3, type, normalize, 5 * FSIZE, 0);
+  gl.vertexAttribPointer(positionAttributeLocation, 3, type, normalize, 8 * FSIZE, 0);
   gl.enableVertexAttribArray(positionAttributeLocation);
   // 纹理坐标
-  gl.vertexAttribPointer(texCoordAttributeLocation, 2, type, normalize, 5 * FSIZE, 3 * FSIZE);
+  gl.vertexAttribPointer(texCoordAttributeLocation, 2, type, normalize, 8 * FSIZE, 3 * FSIZE);
   gl.enableVertexAttribArray(texCoordAttributeLocation);
-
+  // 颜色
+  gl.vertexAttribPointer(colorAttributeLocation, 3, type, normalize, 8 * FSIZE, 5 * FSIZE);
+  gl.enableVertexAttribArray(colorAttributeLocation);
   // 索引
   const ebo = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);

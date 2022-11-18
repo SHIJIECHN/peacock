@@ -38,3 +38,12 @@
 
 <img src="./img/shader_exercise1.jpg" alt="shader_exercise1"/>
 
+
+## 4.1.textures 纹理
+
+<img src="./img/textures.jpg" alt="textures"/>
+
+## 4.2.textures_and_color 片段着色器中增颜色值
+
+<img src="./img/textures_and_color.jpg" alt="textures_and_color"/>
+

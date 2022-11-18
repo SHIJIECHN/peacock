@@ -2,25 +2,21 @@
  * gl：canvas上下文
  */
 class Shader {
-  constructor(gl) {
+  constructor(gl, vs, fs) {
     this.gl = gl; // canvas上下文
     // 顶点着色器
-    const vertexShader = initShader(this.gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const vertexShader = initShader(this.gl, gl.VERTEX_SHADER, vs || vertexShaderSource);
     // 片段着色器
-    const fragmentShader = initShader(this.gl, this.gl.FRAGMENT_SHADER, fragmentShaderSource);
+    const fragmentShader = initShader(this.gl, this.gl.FRAGMENT_SHADER, fs || fragmentShaderSource);
     // 着色器程序
     this.program = initProgram(this.gl, vertexShader, fragmentShader);
+    gl.useProgram(this.program);
   }
-
-  // 生成一个着色器程序
-  // getID() {
-  //   return this.program;
-  // }
 
   // 激活着色器程序
-  use() {
-    this.gl.useProgram(this.program);
-  }
+  // use() {
+  //   this.gl.useProgram(this.program);
+  // }
 
   /**
    * set...方法能够查询unifrom的位置值并设置它的值
