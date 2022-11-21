@@ -32,6 +32,10 @@ class Shader {
     this.gl.uniform1f(gl.getUniformLocation(this.program, name), value);
   }
 
+  setInt(name, value) {
+    this.gl.uniform1i(gl.getUniformLocation(this.program, name), value);
+  }
+
 }
 
 

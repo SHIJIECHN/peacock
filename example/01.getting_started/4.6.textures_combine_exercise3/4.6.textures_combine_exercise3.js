@@ -34,10 +34,10 @@ async function render(image0, image1) {
   //--------------------------------------------------------------------------
   const vertices = new Float32Array([
     // position // coolor // texture coords
-    0.5, 0.5, 0, 1, 0, 0, 1, 1,
-    0.5, -0.5, 0, 0, 1, 0, 1, 0,
-    -0.5, -0.5, 0, 0, 0, 1, 0, 0,
-    -0.5, 0.5, 0, 1, 1, 0, 0, 1,
+    0.5, 0.5, 0, 1, 0, 0, 0.55, 0.55,
+    0.5, -0.5, 0, 0, 1, 0, 0.55, 0.45,
+    -0.5, -0.5, 0, 0, 0, 1, 0.45, 0.45,
+    -0.5, 0.5, 0, 1, 1, 0, 0.45, 0.55,
   ]);
   const FSIZE = vertices.BYTES_PER_ELEMENT;
 
@@ -79,11 +79,12 @@ async function render(image0, image1) {
   // texture0
   gl.bindTexture(gl.TEXTURE_2D, texture0);
   // set the texture wrapping parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
   // set texture filtering parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); // set texture filtering to nearest neighbor to clearly see the texels/pixels
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   // flip texture's on the y-axis
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, image0.width, image0.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image0);
@@ -92,11 +93,12 @@ async function render(image0, image1) {
   // texture1
   gl.bindTexture(gl.TEXTURE_2D, texture1);
   // set the texture wrapping parameters
+  // gl.REPEAT
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
   // set texture filtering parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   // loaded image and generator mipmaps
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, image1.width, image1.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image1);
   gl.generateMipmap(gl.TEXTURE_2D);

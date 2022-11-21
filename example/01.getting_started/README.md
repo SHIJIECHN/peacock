@@ -47,3 +47,26 @@
 
 <img src="./img/textures_and_color.jpg" alt="textures_and_color"/>
 
+## 4.3.textures_combine 多个纹理结合
+
+<img src="./img/4.3.textures_combine.jpg" alt="4.3.textures_combine"/>
+
+## 4.4.textures_combine_exercise1 修改片段着色器，仅让笑脸图案朝另一个方向看
+
+<img src="./img/4.4.textures_combine_exercise.jpg" alt="4.4.textures_combine_exercise"/>
+
+## 4.5.textures_combine_exercise2 设置纹理坐标范围为(0,0)到(2,2)，并设置不同环绕方式
+### 1. gl.REPEAT 与 gl.MIRRORED_REPEAT
+
+<img src="./img/4.5.textures_combine_exercise2.1.jpg" alt=""/>
+
+### 2. gl.CLAMP_TO_EDGE
+
+<img src="./img/4.5.textures_combine_exercise2.2.jpg" alt=""/>
+
+
+## 4.6.textures_combine_exercise3 修改纹理坐标让矩形只显示纹理图像的中间一部分，并使用gl.NEAREST的纹理过滤方式。
+
+<img src="./img/4.6.textures_combine_exercise3.jpg" alt=""/>
+
+

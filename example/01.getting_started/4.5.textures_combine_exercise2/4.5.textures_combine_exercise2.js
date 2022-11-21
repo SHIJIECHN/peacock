@@ -34,10 +34,10 @@ async function render(image0, image1) {
   //--------------------------------------------------------------------------
   const vertices = new Float32Array([
     // position // coolor // texture coords
-    0.5, 0.5, 0, 1, 0, 0, 1, 1,
-    0.5, -0.5, 0, 0, 1, 0, 1, 0,
+    0.5, 0.5, 0, 1, 0, 0, 2, 2,
+    0.5, -0.5, 0, 0, 1, 0, 2, 0,
     -0.5, -0.5, 0, 0, 0, 1, 0, 0,
-    -0.5, 0.5, 0, 1, 1, 0, 0, 1,
+    -0.5, 0.5, 0, 1, 1, 0, 0, 2,
   ]);
   const FSIZE = vertices.BYTES_PER_ELEMENT;
 
@@ -79,8 +79,15 @@ async function render(image0, image1) {
   // texture0
   gl.bindTexture(gl.TEXTURE_2D, texture0);
   // set the texture wrapping parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_BORDER);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_BORDER);
+
+  const borderColor = [1, 1, 0, 1];
+  console.log(gl)
+  gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_BORDER_COLOR, borderColor);
+
   // set texture filtering parameters
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -92,8 +99,15 @@ async function render(image0, image1) {
   // texture1
   gl.bindTexture(gl.TEXTURE_2D, texture1);
   // set the texture wrapping parameters
+  // gl.REPEAT
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  // gl.MIRRORED_REPEAT 镜像放置
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+  // gl.CLAMP_TO_EDGE
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   // set texture filtering parameters
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);

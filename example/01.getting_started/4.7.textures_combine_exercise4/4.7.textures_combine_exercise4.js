@@ -81,8 +81,9 @@ async function render(image0, image1) {
   // set the texture wrapping parameters
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+
   // set texture filtering parameters
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // set texture filtering to nearest neighbor to clearly see the texels/pixels
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   // flip texture's on the y-axis
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -92,6 +93,7 @@ async function render(image0, image1) {
   // texture1
   gl.bindTexture(gl.TEXTURE_2D, texture1);
   // set the texture wrapping parameters
+  // gl.REPEAT
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
   // set texture filtering parameters
@@ -108,18 +110,45 @@ async function render(image0, image1) {
 
   // render
   //-------------------------------------------------------------------------
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.clearColor(0.2, 0.3, 0.3, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  let minValue = 0.3;
+  drawScense();
 
-  // bind textures on corresponding texture units
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, texture0);
-  gl.activeTexture(gl.TEXTURE1);
-  gl.bindTexture(gl.TEXTURE_2D, texture1);
+  function drawScense() {
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clearColor(0.2, 0.3, 0.3, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
-  // render container
-  gl.bindVertexArray(vao);
-  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
+    ourShader.setFloat('minValue', minValue)
+
+    // bind textures on corresponding texture units
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture0);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, texture1);
+
+    // render container
+    gl.bindVertexArray(vao);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
+
+  }
+
+  // 监听键盘输入
+  document.onkeydown = processInput;
+  function processInput(e) {
+    if (e && e.keyCode == 38) {
+      minValue += 0.1;
+      if (minValue > 1) {
+        minValue = 1;
+      }
+      drawScense();
+    }
+    if (e && e.keyCode == 40) {
+      minValue -= 0.1;
+      if (minValue < 0) {
+        minValue = 0;
+      }
+      drawScense();
+    }
+  }
 
 }
