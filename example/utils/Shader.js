@@ -1,5 +1,6 @@
 /**
  * gl：canvas上下文
+ * 着色器
  */
 class Shader {
   constructor(gl, vs, fs) {
@@ -14,9 +15,9 @@ class Shader {
   }
 
   // 激活着色器程序
-  // use() {
-  //   this.gl.useProgram(this.program);
-  // }
+  use() {
+    this.gl.useProgram(this.program);
+  }
 
   /**
    * set...方法能够查询unifrom的位置值并设置它的值
@@ -29,11 +30,35 @@ class Shader {
 
   setFloat(name, value) {
     // 新的值被用于uniform
-    this.gl.uniform1f(gl.getUniformLocation(this.program, name), value);
+    this.gl.uniform1f(this.gl.getUniformLocation(this.program, name), value);
   }
 
   setInt(name, value) {
-    this.gl.uniform1i(gl.getUniformLocation(this.program, name), value);
+    this.gl.uniform1i(this.gl.getUniformLocation(this.program, name), value);
+  }
+
+  setVec2(name, value) {
+    this.gl.uniform2fv(this.gl.getUniformLocation(this.program, name), value)
+  }
+
+  setVec3(name, value) {
+    this.gl.uniform3fv(this.gl.getUniformLocation(this.program, name), value)
+  }
+
+  setVec4(name, value) {
+    this.gl.uniform4fv(this.gl.getUniformLocation(this.program, name), value)
+  }
+
+  setMat2(name, mat) {
+    this.gl.uniformMatrix2fv(this.gl.getUniformLocation(this.program, name), false, mat)
+  }
+
+  setMat3(name, mat) {
+    this.gl.uniformMatrix3fv(this.gl.getUniformLocation(this.program, name), false, mat)
+  }
+
+  setMat4(name, mat) {
+    this.gl.uniformMatrix4fv(this.gl.getUniformLocation(this.program, name), false, mat)
   }
 
 }
