@@ -30,39 +30,74 @@ async function render(image0, image1) {
     return;
   }
 
-  // look up uniform 
-  const transformLoc = gl.getUniformLocation(ourShader.program, 'transform');
-  if (!transformLoc) {
-    console.log('Failed to get transform.')
-  }
-
   // set up vertex data
   //--------------------------------------------------------------------------
+  // 开启深度检测
+  gl.enable(gl.DEPTH_TEST);
+
   const vertices = new Float32Array([
-    // position  // texture coords
-    0.5, 0.5, 0, 1, 1,
-    0.5, -0.5, 0, 1, 0,
-    -0.5, -0.5, 0, 0, 0,
-    -0.5, 0.5, 0, 0, 1,
+    -0.5, -0.5, -0.5, 0.0, 0.0,
+    0.5, -0.5, -0.5, 1.0, 0.0,
+    0.5, 0.5, -0.5, 1.0, 1.0,
+    0.5, 0.5, -0.5, 1.0, 1.0,
+    -0.5, 0.5, -0.5, 0.0, 1.0,
+    -0.5, -0.5, -0.5, 0.0, 0.0,
+    -0.5, -0.5, 0.5, 0.0, 0.0,
+    0.5, -0.5, 0.5, 1.0, 0.0,
+    0.5, 0.5, 0.5, 1.0, 1.0,
+    0.5, 0.5, 0.5, 1.0, 1.0,
+    -0.5, 0.5, 0.5, 0.0, 1.0,
+    -0.5, -0.5, 0.5, 0.0, 0.0,
+
+    -0.5, 0.5, 0.5, 1.0, 0.0,
+    -0.5, 0.5, -0.5, 1.0, 1.0,
+    -0.5, -0.5, -0.5, 0.0, 1.0,
+    -0.5, -0.5, -0.5, 0.0, 1.0,
+    -0.5, -0.5, 0.5, 0.0, 0.0,
+    -0.5, 0.5, 0.5, 1.0, 0.0,
+
+    0.5, 0.5, 0.5, 1.0, 0.0,
+    0.5, 0.5, -0.5, 1.0, 1.0,
+    0.5, -0.5, -0.5, 0.0, 1.0,
+    0.5, -0.5, -0.5, 0.0, 1.0,
+    0.5, -0.5, 0.5, 0.0, 0.0,
+    0.5, 0.5, 0.5, 1.0, 0.0,
+
+    -0.5, -0.5, -0.5, 0.0, 1.0,
+    0.5, -0.5, -0.5, 1.0, 1.0,
+    0.5, -0.5, 0.5, 1.0, 0.0,
+    0.5, -0.5, 0.5, 1.0, 0.0,
+    -0.5, -0.5, 0.5, 0.0, 0.0,
+    -0.5, -0.5, -0.5, 0.0, 1.0,
+
+    -0.5, 0.5, -0.5, 0.0, 1.0,
+    0.5, 0.5, -0.5, 1.0, 1.0,
+    0.5, 0.5, 0.5, 1.0, 0.0,
+    0.5, 0.5, 0.5, 1.0, 0.0,
+    -0.5, 0.5, 0.5, 0.0, 0.0,
+    -0.5, 0.5, -0.5, 0.0, 1.0
   ]);
   const FSIZE = vertices.BYTES_PER_ELEMENT;
 
-  const indices = new Int32Array([
-    0, 1, 3,
-    1, 2, 3
-  ]);
+  const cubePositions = [
+    [0, 0, 0],
+    [2, 5, -15],
+    [-1.5, -2.2, -2.5],
+    [-3.8, -2, -12.3],
+    [2.4, -0.4, -3.5],
+    [-1.7, 3, -7.5],
+    [1.3, -2, -2.5],
+    [1.5, 2, -2.5],
+    [1.5, 0.2, -1.5],
+    [-1.3, 1, -1.5],
+  ]
 
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
 
   const vbo = gl.createBuffer();
-  const ebo = gl.createBuffer();
-
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
   // position
   gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 5 * FSIZE, 0);
@@ -106,11 +141,17 @@ async function render(image0, image1) {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, image1.width, image1.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image1);
   gl.generateMipmap(gl.TEXTURE_2D);
 
-  ourShader.use();
   // either set it manually like so:
   gl.uniform1i(gl.getUniformLocation(ourShader.program, 'texture1'), 0);
   // or set it via the texture class
   ourShader.setInt('texture2', 1);
+
+  // pass projection matrix to shader
+  //----------------------------------
+  const { mat4 } = glMatrix;
+  let projection = mat4.create();
+  mat4.perspective(projection, glMatrix.glMatrix.toRadian(45), gl.canvas.width / gl.canvas.height, 0.1, 100);
+  ourShader.setMat4('projection', projection);
 
   // render
   //-------------------------------------------------------------------------
@@ -122,8 +163,8 @@ async function render(image0, image1) {
 
     // 给画布设置背景颜色
     gl.clearColor(0.2, 0.3, 0.3, 1);
-    // 清空画布
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    // 清空画布，清空深度缓冲
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // bind textures on corresponding texture units
     gl.activeTexture(gl.TEXTURE0);
@@ -131,35 +172,26 @@ async function render(image0, image1) {
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, texture1);
 
-    // first container
+    // create / view transformation
     //----------------------------------------------------------
-    // 矩阵变换
-    let transform = new Matrix4(); // 4x4 单位矩阵
-    transform = transform.translate(0.5, -0.5, 0); // 平移
-    transform = transform.rotate(new Date().getTime(), 0, 0, 1); // 旋转
-    // transform = transform.scale(0.5, 0.5, 0.5); // 缩放
-    console.log(transform.elements)
-
-    gl.uniformMatrix4fv(transformLoc, false, transform.elements);
-
-    // render container
-    gl.bindVertexArray(vao);
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
-
-    // second transform
-    //---------------------------------------------------------
-    let transform1 = new Matrix4();
-    transform1 = transform1.translate(-0.5, 0.5, 0);
-    const scaleAmount = Math.abs(Math.sin(new Date().getTime()));
-    transform1 = transform1.scale(scaleAmount, scaleAmount, scaleAmount);
-
-    gl.uniformMatrix4fv(transformLoc, false, transform1.elements);
-
+    let radius = 10;
+    let now = new Date().getTime();
+    let camX = Math.sin(now) * radius;
+    let camZ = Math.cos(now) * radius;
+    let view = mat4.create();
+    mat4.lookAt(view, [camX, 0, camZ], [0, 0, 0], [0, 1, 0]);
+    ourShader.setMat4('view', view);
 
     // render container
     gl.bindVertexArray(vao);
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
+    for (let i = 0; i < 10; i++) {
+      let model = mat4.create();
+      mat4.translate(model, model, cubePositions[i]);
+      let angle = 20 * i;
+      mat4.rotate(model, model, glMatrix.glMatrix.toRadian(angle), [1, 0.3, 0.5]);
+      ourShader.setMat4('model', model);
 
-
+      gl.drawArrays(gl.TRIANGLES, 0, 36);
+    }
   }
 }

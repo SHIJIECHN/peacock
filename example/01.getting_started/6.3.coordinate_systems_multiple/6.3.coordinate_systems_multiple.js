@@ -1,8 +1,8 @@
 const image0 = new Image();
 const image1 = new Image();
 
-image0.src = './container.jpg';
-image1.src = './awesomeface.png';
+image0.src = '../../resource/container.jpg';
+image1.src = '../../resource/awesomeface.png';
 
 let g_image0 = false,
   g_image1 = false;

@@ -5,7 +5,8 @@ if (!image) {
 image.onload = async function () {
   render(image);
 }
-image.src = './container.jpg';
+
+image.src = '../../resource/container.jpg';
 
 async function render(image) {
   // 从本地加载着色器文件

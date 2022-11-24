@@ -1,8 +1,9 @@
+
 const image0 = new Image();
 const image1 = new Image();
 
-image0.src = './container.jpg';
-image1.src = './awesomeface.png';
+image0.src = '../../resource/container.jpg';
+image1.src = '../../resource/awesomeface.png';
 
 let g_image0 = false,
   g_image1 = false;
@@ -130,13 +131,17 @@ async function render(image0, image1) {
     gl.bindTexture(gl.TEXTURE_2D, texture1);
 
     // 矩阵变换
-    let transform = new Matrix4(); // 4x4 单位矩阵
-    transform = transform.translate(0.5, -0.5, 0); // 平移
-    transform = transform.rotate(new Date().getTime(), 0, 0, 1); // 旋转
+    // let transform = new Matrix4(); // 4x4 单位矩阵
+    // transform = transform.translate(0.5, -0.5, 0); // 平移
+    // transform = transform.rotate(new Date().getTime(), 0, 0, 1); // 旋转
     // transform = transform.scale(0.5, 0.5, 0.5); // 缩放
-    console.log(transform.elements)
 
-    gl.uniformMatrix4fv(transformLoc, false, new Float32Array(transform.elements));
+    const { mat4 } = glMatrix;
+    let trans = mat4.create();
+    mat4.translate(trans, trans, [0.5, -0.5, 0]);
+    mat4.rotate(trans, trans, new Date().getTime(), [0, 0, 1]);
+
+    gl.uniformMatrix4fv(transformLoc, false, trans);
 
     // render container
     gl.bindVertexArray(vao);

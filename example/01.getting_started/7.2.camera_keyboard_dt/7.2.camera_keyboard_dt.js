@@ -79,22 +79,25 @@ async function render(image0, image1) {
   ]);
   const FSIZE = vertices.BYTES_PER_ELEMENT;
 
-  const indices = new Int32Array([
-    0, 1, 3,
-    1, 2, 3
-  ]);
+  const cubePositions = [
+    [0, 0, 0],
+    [2, 5, -15],
+    [-1.5, -2.2, -2.5],
+    [-3.8, -2, -12.3],
+    [2.4, -0.4, -3.5],
+    [-1.7, 3, -7.5],
+    [1.3, -2, -2.5],
+    [1.5, 2, -2.5],
+    [1.5, 0.2, -1.5],
+    [-1.3, 1, -1.5],
+  ]
 
   const vao = gl.createVertexArray();
   gl.bindVertexArray(vao);
 
   const vbo = gl.createBuffer();
-  const ebo = gl.createBuffer();
-
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
   // position
   gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 5 * FSIZE, 0);
@@ -138,11 +141,64 @@ async function render(image0, image1) {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, image1.width, image1.height, 0, gl.RGB, gl.UNSIGNED_BYTE, image1);
   gl.generateMipmap(gl.TEXTURE_2D);
 
-  ourShader.use();
   // either set it manually like so:
   gl.uniform1i(gl.getUniformLocation(ourShader.program, 'texture1'), 0);
   // or set it via the texture class
   ourShader.setInt('texture2', 1);
+
+  // pass projection matrix to shader
+  //----------------------------------
+  const { mat4, vec3 } = glMatrix;
+  console.log(glMatrix)
+  let projection = mat4.create();
+  mat4.perspective(projection, glMatrix.glMatrix.toRadian(45), gl.canvas.width / gl.canvas.height, 0.1, 100);
+  ourShader.setMat4('projection', projection);
+
+
+  // keydown
+  //-------------------------------------------
+  document.onkeydown = processInput;
+
+  let cameraPos = [0, 0, 3];
+  let cameraFront = [0, 0, -1];
+  let cameraUp = [0, 1, 0];
+
+  let deltaTime = 0; // time between current frame and last frame
+  let lasteFrame = new Date().getTime();
+
+  function processInput(e) {
+    // per-frame time logic
+    let currentFrame = new Date().getTime(); // 毫秒
+    deltaTime = currentFrame - lasteFrame;
+    lasteFrame = currentFrame;
+
+    let cameraSpeed = 2.5 * (deltaTime / 1000);
+
+    if (e && e.keyCode == 87) { // w 变近
+      // cameraPos += cameraSpeed * cameraFront;
+      let res = cameraFront.map(item => item * cameraSpeed); // cameraSpeed * cameraFront
+      cameraPos = cameraPos.map((item, index) => item + res[index]);
+    } else if (e && e.keyCode == 83) { // s 变远
+      // cameraPos -= cameraSpeed * cameraFront;
+      let res = cameraFront.map(item => item * cameraSpeed);
+      cameraPos = cameraPos.map((item, index) => item - res[index]);
+    } else if (e && e.keyCode == 68) { // a
+      let cross = [];
+      vec3.cross(cross, cameraFront, cameraUp);
+      vec3.normalize(cross, cross);
+      // cameraPos -= cross * cameraSpeed;
+      cross = cross.map(item => item * cameraSpeed);
+      cameraPos = cameraPos.map((item, index) => item - cross[index]);
+    } else if (e && e.keyCode == 65) { // d
+      let cross = [];
+      vec3.cross(cross, cameraFront, cameraUp);
+      vec3.normalize(cross, cross);
+      // cameraPos += cross * cameraSpeed;
+      cross = cross.map(item => item * cameraSpeed);
+      cameraPos = cameraPos.map((item, index) => item + cross[index]);
+    }
+    drawScense();
+  }
 
   // render
   //-------------------------------------------------------------------------
@@ -163,35 +219,30 @@ async function render(image0, image1) {
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, texture1);
 
-    // first container
+    // create / view transformation
     //----------------------------------------------------------
-    // Model
-    let model = new Matrix4();
-    modle = model.rotate(new Date().getTime(), 0.5, 1, 0);
-    // View
-    let view = new Matrix4();
-    view = view.translate(0, 0, -3);
-    // Projection
-    let projection = new Matrix4();
-    projection = projection.perspective(45, gl.canvas.width / gl.canvas.height, 1, 100);
-
-    const modelLoc = gl.getUniformLocation(ourShader.program, 'model');
-    const viewLoc = gl.getUniformLocation(ourShader.program, 'view');
-    const projectionLoc = gl.getUniformLocation(ourShader.program, 'projection');
-    if (!modelLoc || !viewLoc || !projectionLoc) {
-      console.log('Failed to get uniform location');
-      return;
-    }
-    gl.uniformMatrix4fv(modelLoc, false, model.elements);
-    gl.uniformMatrix4fv(viewLoc, false, view.elements);
-    // gl.uniformMatrix4fv(projectionLoc, false, projection.elements);
-    ourShader.setMat4('projection', projection.elements);
-
-    // gl.uniformMatrix4fv(transformLoc, false, transform.elements);
+    let radius = 10;
+    let now = new Date().getTime();
+    let camX = Math.sin(now) * radius;
+    let camZ = Math.cos(now) * radius;
+    let view = mat4.create();
+    let newCenter = [];
+    vec3.add(newCenter, cameraPos, cameraFront);
+    mat4.lookAt(view, cameraPos, newCenter, cameraUp);
+    ourShader.setMat4('view', view);
 
     // render container
     gl.bindVertexArray(vao);
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
+    for (let i = 0; i < 10; i++) {
+      let model = mat4.create();
+      mat4.translate(model, model, cubePositions[i]);
+      let angle = 20 * i;
+      mat4.rotate(model, model, glMatrix.glMatrix.toRadian(angle), [1, 0.3, 0.5]);
+      ourShader.setMat4('model', model);
 
+      gl.drawArrays(gl.TRIANGLES, 0, 36);
+    }
   }
+
+
 }
