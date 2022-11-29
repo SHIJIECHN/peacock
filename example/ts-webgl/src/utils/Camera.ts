@@ -109,7 +109,7 @@ export default class Camera {
     yOffset *= this.mouseSensitivity;
 
     this.yaw += xOffset;
-    this.pitch += yOffset;
+    this.pitch -= yOffset;
     if (constrainPitch) {
       if (this.pitch > 89) this.pitch = 89;
       if (this.pitch < -89) this.pitch = -89;
