@@ -2,7 +2,7 @@
 const vsColor = `#version 300 es
 
 layout(location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal; // 每一个顶点的法向量
+layout (location = 1) in vec3 aNormal; // 每一个顶点的法向量（垂直于平面）
 
 uniform mat4 model;
 uniform mat4 view;

@@ -1,12 +1,5 @@
 import { mat4, vec3, glMatrix } from 'gl-matrix'
 
-interface CameraData {
-  position: vec3,
-  worldUp: vec3,
-  yaw: number,
-  pitch: number,
-}
-
 // define serveral posible options for camera movement
 export enum Camera_Movement {
   FORWARD,
@@ -68,6 +61,7 @@ export default class Camera {
   }
 
   // returns the view matrxi calculated using Enuler angles and the lookAt Matrix 获得当前的观察矩阵
+  // 计算观察矩阵
   public getViewMatrix() {
     const center = vec3.add(vec3.create(), this.position, this.front);
     return mat4.lookAt(mat4.create(), this.position, center, this.up);

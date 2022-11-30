@@ -104,7 +104,16 @@ function render(gl: WebGL2RenderingContext) {
   let cameraFront: vec3 = [0, 0, -1];
   let cameraUp: vec3 = [0, 1, 0];
 
-  function drawScense() {
+  let deltaTime = 0; // 当前帧与上一帧的时间差
+  let lastFrame = 0; // 上一帧的时间
+
+  function drawScense(time: number) {
+
+    // per-frame time logic
+    let currentFrame = time; // 毫秒
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
     // render
     //----------------------------------------------------------------------
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -142,10 +151,13 @@ function render(gl: WebGL2RenderingContext) {
       gl.drawArrays(gl.TRIANGLES, 0, 36);
     }
 
+    requestAnimationFrame(drawScense)
+
   }
 
   document.onkeydown = function (e) {
-    let cameraSpeed = 0.05;
+    let cameraSpeed = 2.5 * (deltaTime / 1000);
+
     switch (e.key) {
       case 'w':
         cameraPos = vec3.add(vec3.create(), cameraPos, vec3.scale(vec3.create(), cameraFront, cameraSpeed));
@@ -154,15 +166,15 @@ function render(gl: WebGL2RenderingContext) {
         cameraPos = vec3.sub(vec3.create(), cameraPos, vec3.scale(vec3.create(), cameraFront, cameraSpeed));
         break;
       case 'a':
-        cameraPos = vec3.add(vec3.create(), cameraPos, vec3.scale(vec3.create(), vec3.normalize(vec3.create(), vec3.cross(vec3.create(), cameraFront, cameraUp)), cameraSpeed));
+        cameraPos = vec3.sub(vec3.create(), cameraPos, vec3.scale(vec3.create(), vec3.normalize(vec3.create(), vec3.cross(vec3.create(), cameraFront, cameraUp)), cameraSpeed));
         break;
-      case 'a':
+      case 'd':
         cameraPos = vec3.add(vec3.create(), cameraPos, vec3.scale(vec3.create(), vec3.normalize(vec3.create(), vec3.cross(vec3.create(), cameraFront, cameraUp)), cameraSpeed));
         break;
     }
   }
 
-  drawScense();
+  requestAnimationFrame(drawScense)
 
 }
 

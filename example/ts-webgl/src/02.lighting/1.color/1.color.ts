@@ -15,8 +15,8 @@ const fsColor = `#version 300 es
 precision highp float;
 out vec4 FragColor;
 
-uniform vec3 objectColor;
-uniform vec3 lightColor;
+uniform vec3 objectColor; // 物体的颜色
+uniform vec3 lightColor; // 光的颜色
 
 void main(){
   FragColor = vec4(lightColor * objectColor, 1.0);

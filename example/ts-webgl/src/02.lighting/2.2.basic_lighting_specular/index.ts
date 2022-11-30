@@ -6,7 +6,7 @@ import { vsColor, fsColor } from './2.2.basic_lighting'
 import { vsCube, fsCube } from './2.2.light_cube'
 import { vertices } from './vertices'
 
-export default async function main(gl: WebGL2RenderingContext) {
+export default async function main(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) {
   const camera = new Camera({
     position: [0, 0, 6]
   });
@@ -134,7 +134,7 @@ export default async function main(gl: WebGL2RenderingContext) {
     }
 
     let xOffset = xpos - lastX;
-    let yOffset = lastY - ypos;
+    let yOffset = ypos - lastY;
 
     lastX = xpos;
     lastY = ypos;

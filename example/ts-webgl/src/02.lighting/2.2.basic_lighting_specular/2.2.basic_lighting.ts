@@ -14,7 +14,7 @@ out vec3 FragPos; // 世界空间坐标
 void main(){
   gl_Position = projection * view * vec4(aPos, 1.0);
   FragPos = vec3(model * vec4(aPos, 1.0)); // 因为是在世界空间中进行所有光照的计算，因此需要一个在世界空间中的顶点位置
-  Normal = mat3(transpose(inverse(model))) * aNormal; // mat3(transpose(inverse(model))) 生成发现矩阵
+  Normal = mat3(transpose(inverse(model))) * aNormal; // mat3(transpose(inverse(model))) 生成法线矩阵
 }`;
 
 const fsColor = `#version 300 es
@@ -27,7 +27,7 @@ in vec3 FragPos;
 uniform vec3 objectColor;
 uniform vec3 lightColor;
 uniform vec3 lightPos; // 光源的位置
-uniform vec3 viewPos; // 摄像机的位置向量
+uniform vec3 viewPos; // 摄像机的位置
 
 void main(){
   // 环境光 ambient。用光的颜色乘以一个很小的常量环境因子，再乘以物体的颜色，然后将最终结果作为片段的颜色
@@ -42,8 +42,8 @@ void main(){
 
   // 镜面光照 specular
   float specularStrength = 0.5; // 镜面强度变量
-  vec3 viewDir = normalize(viewPos - FragPos); // 视线的发现向量
-  vec3 reflectDir = reflect(-lightDir, norm); // 沿着发现轴的反射向量。reflect函数要求第一个向量是从光线指向片段位置的向量，lightDir是从片段指向光源。
+  vec3 viewDir = normalize(viewPos - FragPos); // 视线的法线向量
+  vec3 reflectDir = reflect(-lightDir, norm); // 沿着法线轴的反射向量。reflect函数要求第一个向量是从光线指向片段位置的向量，lightDir是从片段指向光源。
   float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0); // 32是高光的反光度。dot(viewDir, reflectDir)视线方向与反射方向的点乘， max确保它不是负值
   vec3 specalar = specularStrength * spec * lightColor; // 镜面分量
 

@@ -22,11 +22,13 @@ var Matrix4 = function (opt_src) {
     }
     this.elements = d;
   } else {
+    // 类型化数组（Float32Array）包含了Matrix4实例的矩阵元素
     this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   }
 };
 
 /**
+ * 将Matrix4实例初始化为单位阵
  * Set the identity matrix.
  * @return this
  */
@@ -40,6 +42,7 @@ Matrix4.prototype.setIdentity = function () {
 };
 
 /**
+ * 将Matrix4实例设置为src，src必须也是一个Matrix4实例
  * Copy matrix.
  * @param src source matrix
  * @return this
@@ -415,6 +418,7 @@ Matrix4.prototype.perspective = function (fovy, aspect, near, far) {
 };
 
 /**
+ * 将Matrix4实例设置为缩放矩阵
  * Set the matrix for scaling.
  * @param x The scale factor along the X axis
  * @param y The scale factor along the Y axis
@@ -431,6 +435,7 @@ Matrix4.prototype.setScale = function (x, y, z) {
 };
 
 /**
+ * 将Matrix4实例乘以一个缩放旋转矩阵，所得的结果还存在Matrix4中
  * Multiply the matrix for scaling from the right.
  * @param x The scale factor along the X axis
  * @param y The scale factor along the Y axis
@@ -447,10 +452,11 @@ Matrix4.prototype.scale = function (x, y, z) {
 };
 
 /**
+ * 将Matrix4实例设置为平移变换矩阵
  * Set the matrix for translation.
- * @param x The X value of a translation.
- * @param y The Y value of a translation.
- * @param z The Z value of a translation.
+ * @param x The X value of a translation. 在X轴上平移的距离是x
+ * @param y The Y value of a translation. 在Y轴上平移的距离是y
+ * @param z The Z value of a translation. 在Z轴上平移的距离是z
  * @return this
  */
 Matrix4.prototype.setTranslate = function (x, y, z) {
@@ -463,10 +469,11 @@ Matrix4.prototype.setTranslate = function (x, y, z) {
 };
 
 /**
+ * 将Matrix4实例乘以一个平移变换矩阵，所得的结果还存在Matrix4中
  * Multiply the matrix for translation from the right.
- * @param x The X value of a translation.
- * @param y The Y value of a translation.
- * @param z The Z value of a translation.
+ * @param x The X value of a translation. 该平移矩阵在X轴平移的距离为x
+ * @param y The Y value of a translation. 该平移矩阵在Y轴平移的距离为y
+ * @param z The Z value of a translation. 该平移矩阵在Z轴平移的距离为z
  * @return this
  */
 Matrix4.prototype.translate = function (x, y, z) {
@@ -479,9 +486,10 @@ Matrix4.prototype.translate = function (x, y, z) {
 };
 
 /**
+ * 将Matrix4实例设置为旋转变换矩阵
  * Set the matrix for rotation.
  * The vector of rotation axis may not be normalized.
- * @param angle The angle of rotation (degrees)
+ * @param angle The angle of rotation (degrees) 旋转的角度为angle
  * @param x The X coordinate of vector of rotation axis.
  * @param y The Y coordinate of vector of rotation axis.
  * @param z The Z coordinate of vector of rotation axis.
@@ -565,6 +573,7 @@ Matrix4.prototype.setRotate = function (angle, x, y, z) {
 };
 
 /**
+ * 将Matrix4实例乘以一个平移旋转矩阵，所得的结果还存在Matrix4中
  * Multiply the matrix for rotation from the right.
  * The vector of rotation axis may not be normalized.
  * @param angle The angle of rotation (degrees)

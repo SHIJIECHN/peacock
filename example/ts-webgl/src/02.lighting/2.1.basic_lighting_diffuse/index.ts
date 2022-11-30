@@ -6,7 +6,7 @@ import { vsColor, fsColor } from './2.1.basic_lighting'
 import { vsCube, fsCube } from './2.1.light_cube'
 import { vertices } from './vertices'
 
-export default async function main(gl: WebGL2RenderingContext) {
+export default async function main(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) {
   const camera = new Camera({
     position: [0, 0, 6]
   });
@@ -22,8 +22,8 @@ export default async function main(gl: WebGL2RenderingContext) {
   // lighting
   let lightPos: vec3 = [1.2, 1, 2];
 
-  const lightingShader = new Shader(gl, vsColor, fsColor);
-  const lightCubeShader = new Shader(gl, vsCube, fsCube);
+  const lightingShader: Shader = new Shader(gl, vsColor, fsColor);
+  const lightCubeShader: Shader = new Shader(gl, vsCube, fsCube);
 
   const cubeVao = gl.createVertexArray();
   const vbo = gl.createBuffer();
@@ -133,7 +133,7 @@ export default async function main(gl: WebGL2RenderingContext) {
     }
 
     let xOffset = xpos - lastX;
-    let yOffset = lastY - ypos;
+    let yOffset = ypos - lastY;
 
     lastX = xpos;
     lastY = ypos;
