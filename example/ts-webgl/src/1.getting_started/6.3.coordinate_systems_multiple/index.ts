@@ -1,8 +1,9 @@
-import { vs, fs } from './6.1.coordinate_systems';
+import { vs, fs } from './6.3.coordinate_systems_multiple';
 import container from '../../resource/container.jpg';
 import awesomeface from '../../resource/awesomeface.png';
 import Shader from 'utils/Shader';
-import { glMatrix, mat4 } from 'gl-matrix'
+import { glMatrix, mat4, vec3 } from 'gl-matrix'
+import { vertices, cubePositions } from './vertices'
 
 let g_image1 = false,
   g_image2 = false;
@@ -10,12 +11,9 @@ let g_image1 = false,
 const image1 = new Image();
 const image2 = new Image();
 
-
-
 export default function main(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) {
   image1.src = container;
   image2.src = awesomeface;
-  console.log(container)
 
   image1.onload = function () {
     g_image1 = true;
@@ -33,14 +31,6 @@ function render(gl: WebGL2RenderingContext) {
   }
 
   const ourShader = new Shader(gl, vs, fs);
-
-  const vertices = new Float32Array([
-    // positions          // texture coords
-    0.5, 0.5, 0.0, 1.0, 1.0, // top right
-    0.5, -0.5, 0.0, 1.0, 0.0, // bottom right
-    -0.5, -0.5, 0.0, 0.0, 0.0, // bottom left
-    -0.5, 0.5, 0.0, 0.0, 1.0  // top left 
-  ]);
 
   const indices = new Int32Array([
     0, 1, 3, // first triangle
@@ -103,35 +93,49 @@ function render(gl: WebGL2RenderingContext) {
   ourShader.setInt('texture1', 0);
   ourShader.setInt('texture2', 1);
 
-  // render
-  //----------------------------------------------------------------------
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  function drawScense() {
+    // render
+    //----------------------------------------------------------------------
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-  gl.clearColor(0.2, 0.3, 0.3, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clearColor(0.2, 0.3, 0.3, 1);
+    // 启用深度测试
+    gl.enable(gl.DEPTH_TEST);
+    // 清空颜色缓冲和深度缓冲
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  //bind textures on corresponding texture units
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, texture1);
-  gl.activeTexture(gl.TEXTURE1);
-  gl.bindTexture(gl.TEXTURE_2D, texture2);
+    //bind textures on corresponding texture units
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture1);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, texture2);
 
-  ourShader.use();
+    ourShader.use();
 
-  let model = mat4.create();
-  let view = mat4.create();
-  let projection = mat4.create();
+    let view = mat4.create();
+    let projection = mat4.create();
 
-  model = mat4.rotate(model, model, glMatrix.toRadian(-55), [1, 0, 0]); // 沿着X轴 旋转55度
-  view = mat4.translate(view, view, [0, 0, -3]); // 沿着-Z 平移3
-  projection = mat4.perspective(projection, glMatrix.toRadian(45), gl.canvas.width / gl.canvas.height, 0.1, 100);
+    view = mat4.translate(view, view, [0, 0, -3]); // 沿着-Z 平移3
+    projection = mat4.perspective(projection, glMatrix.toRadian(45), gl.canvas.width / gl.canvas.height, 0.1, 100);
 
-  // retrieve the matrix uniform location
-  ourShader.setMat4('model', model);
-  ourShader.setMat4('view', view);
-  ourShader.setMat4('projection', projection);
+    // retrieve the matrix uniform location
+    ourShader.setMat4('view', view);
+    ourShader.setMat4('projection', projection);
 
-  gl.bindVertexArray(vao);
-  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
+    gl.bindVertexArray(vao);
+    // 10个立方体
+    for (let i = 0; i < 10; i++) {
+      let model = mat4.create();
+      model = mat4.translate(model, model, new Float32Array(cubePositions[i]));
+      let angle = 20 * i;
+      model = mat4.rotate(model, model, glMatrix.toRadian(angle), [1, 0.3, 0.5]);
+
+      ourShader.setMat4('model', model);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 36);
+    }
+  }
+
+  drawScense();
 }
 
