@@ -40,6 +40,10 @@ module.exports = {
             {
                 test: /\.(png|jpg)?$/,
                 type: 'asset/resource'
+            },
+            {
+                test: /\.(glsl|vs|fs)$/,
+                loader: 'ts-shader-loader'
             }
         ]
     },

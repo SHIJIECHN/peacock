@@ -11,7 +11,11 @@
 // import main from './02.lighting/2.1.basic_lighting_diffuse'
 // import main from './02.lighting/2.2.basic_lighting_specular'
 // import main from './02.lighting/2.3.basic_lighting-exercise1'
-import main from './02.lighting/2.4.basic_lighting-exercise2'
+// import main from './02.lighting/2.4.basic_lighting-exercise2'
+// import main from './02.lighting/3.1.materials'
+// import main from './02.lighting/3.2.materials-exercise1'
+// import main from './02.lighting/4.1.lighting_maps_diffuse_map'
+import main from './02.lighting/4.2.lighting_maps_specular_map'
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const gl = canvas.getContext('webgl2');
