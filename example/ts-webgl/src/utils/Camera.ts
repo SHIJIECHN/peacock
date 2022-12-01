@@ -133,9 +133,9 @@ export default class Camera {
 
     vec3.normalize(this.front, [x, y, z]);
     vec3.cross(this.right, this.front, this.worldUp)
-    // vec3.normalize(this.right, this.right);
+    vec3.normalize(this.right, this.right);
     vec3.cross(this.up, this.right, this.front)
-    // vec3.normalize(this.up, this.up);
+    vec3.normalize(this.up, this.up);
     // normalize
   }
 
