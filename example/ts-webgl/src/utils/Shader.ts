@@ -49,7 +49,7 @@ class Shader {
   }
 
   // 激活着色器程序
-  use() {
+  use(): void {
     this.gl.useProgram(this.program);
   }
 
@@ -59,40 +59,48 @@ class Shader {
    * @param {*} value  uniform的值
    */
   // #region uniform工具函数  https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glUniform.xml
-  public setFloat(name: string, value: number) {
+  setFloat(name: string, value: number) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform1f(location, value);
   }
 
-  public setFloat2(name: string, x: number, y: number) {
+  setFloat2(name: string, x: number, y: number) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform2f(location, x, y);
   }
 
-  public setFloat3(name: string, x: number, y: number, z: number) {
+  setFloat3(name: string, x: number, y: number, z: number) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform3f(location, x, y, z);
   }
 
-  public setFloat4(name: string, x: number, y: number, z: number, w: number) {
+  setFloat4(name: string, x: number, y: number, z: number, w: number) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform4f(location, x, y, z, w);
   }
 
-  public setInt(name: string, value: number) {
+  setInt(name: string, value: number) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform1i(location, value);
   }
 
-  public setVec2(name: string, value: vec3) {
+  setVec2(name: string, value: vec3) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform2fv(location, value)
   }
 
-  public setVec3(name: string, value: vec3) {
+  setVec3(name: string, value: vec3) {
     const location = this.gl.getUniformLocation(this.program, name);
     this.gl.uniform3fv(location, value)
   }
+  // setVec3(name: string, x: number, y: number, z: number): void;
+  // setVec3(name: string, x: Float32Array): void;
+  // setVec3(name: string, x: Float32Array | number, y?: number, z?: number) {
+  //   if (typeof x === 'number' && typeof y === 'number' && typeof z === 'number')
+  //     this.gl.uniform3fv(this.gl.getUniformLocation(this.program, name), [x, y, z]);
+  //   else
+  //     this.gl.uniform3fv(this.gl.getUniformLocation(this.program, name), x as Float32Array);
+  // }
 
   public setVec4(name: string, value: vec3) {
     const location = this.gl.getUniformLocation(this.program, name);

@@ -1,6 +1,7 @@
 /**
  * @description index
  */
+
 // import main from './1.getting_started/6.1.coordinate_systems'
 // import main from './1.getting_started/6.2.coordinate_systems_depth'
 // import main from './1.getting_started/6.3.coordinate_systems_multiple'
@@ -20,13 +21,18 @@
 // import main from './02.lighting/4.4.lighting_maps_exercise3'
 // import main from './02.lighting/5.1.light_casters_directional'
 // import main from './02.lighting/5.2.light_casters_point'
-import main from './02.lighting/5.3.light_casters_spot'
+// import main from './02.lighting/5.3.light_casters_spot'
+import main from './02.lighting/5.4.light_casters_spot_soft'
 
-const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+
+const canvas = document.getElementById('webgl') as HTMLCanvasElement;
 const gl = canvas.getContext('webgl2');
 if (!gl) {
   console.log('Failed to get gl ceontext.');
 } else {
   main(gl, canvas);
 }
+
+// import main from './02.lighting/test'
+// main();
 

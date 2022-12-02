@@ -1,10 +1,10 @@
 import Shader from '../../utils/Shader'
 import { Camera, CameraMovement } from '../../utils/Camera'
 import { vec3, mat4, glMatrix } from 'gl-matrix'
-import lightCubeVs from './5.3.light_cube.vs'
-import lightCubeFs from './5.3.light_cube.fs'
-import materialsVs from './5.3.light_casters.vs'
-import materialsFs from './5.3.light_casters.fs'
+import lightCubeVs from './5.4.light_cube.vs'
+import lightCubeFs from './5.4.light_cube.fs'
+import materialsVs from './5.4.light_casters.vs'
+import materialsFs from './5.4.light_casters.fs'
 import { vertices, cubePositions } from './vertices'
 import container2 from '../../resource/container2.png'
 import container2_specular from '../../resource/container2_specular.png'
@@ -128,6 +128,7 @@ function render(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) {
     lightingShader.setVec3('light.position', camera.position);
     lightingShader.setVec3('light.direction', camera.front);
     lightingShader.setFloat('light.cutOff', Math.cos(glMatrix.toRadian(12.5))); // 为什么传入cos值？为什么是12.5？
+    lightingShader.setFloat('light.outerCutOff', Math.cos(glMatrix.toRadian(17.5))); // 为什么传入cos值？为什么是12.5？
     lightingShader.setVec3('viewPos', camera.position);
 
     // light properties 将所有光照强度都设置为1

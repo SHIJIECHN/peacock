@@ -1,6 +1,5 @@
 import Shader from '../../utils/Shader'
-import Camera from '../../utils/Camera'
-import { Camera_Movement } from '../../utils/Camera'
+import { Camera, CameraMovement } from '../../utils/Camera'
 import { vec3, mat4, glMatrix } from 'gl-matrix'
 import lightCubeVs from './5.2.light_cube.vs'
 import lightCubeFs from './5.2.light_cube.fs'
@@ -180,16 +179,16 @@ function render(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) {
   window.addEventListener('keydown', (event: KeyboardEvent) => {
     switch (event.key) {
       case 'w':
-        camera.processKeyboard(Camera_Movement.FORWARD, deltaTime * 0.001);
+        camera.processKeyboard(CameraMovement.FORWARD, deltaTime * 0.001);
         break;
       case "s":
-        camera.processKeyboard(Camera_Movement.BACKWARD, deltaTime * 0.001);
+        camera.processKeyboard(CameraMovement.BACKWARD, deltaTime * 0.001);
         break;
       case "a":
-        camera.processKeyboard(Camera_Movement.LEFT, deltaTime * 0.001);
+        camera.processKeyboard(CameraMovement.LEFT, deltaTime * 0.001);
         break;
       case "d":
-        camera.processKeyboard(Camera_Movement.RIGHT, deltaTime * 0.001);
+        camera.processKeyboard(CameraMovement.RIGHT, deltaTime * 0.001);
         break;
       default:
         break;
