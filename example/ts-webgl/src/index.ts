@@ -22,7 +22,8 @@
 // import main from './02.lighting/5.1.light_casters_directional'
 // import main from './02.lighting/5.2.light_casters_point'
 // import main from './02.lighting/5.3.light_casters_spot'
-import main from './02.lighting/5.4.light_casters_spot_soft'
+// import main from './02.lighting/5.4.light_casters_spot_soft'
+import main from './02.lighting/6.1.multiple_lights'
 
 
 const canvas = document.getElementById('webgl') as HTMLCanvasElement;
