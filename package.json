@@ -1,0 +1,35 @@
+{
+  "name": "peacock",
+  "version": "1.0.0",
+  "description": "WebGL",
+  "main": "index.ts",
+  "type": "module",
+  "module": "index.ts",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "dev": "npm run build & npm start",
+    "start": "es-dev-server --node-resolve",
+    "watch": "npm run build -- --watch",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SHIJIECHN/peacock.git"
+  },
+  "keywords": [],
+  "author": "shijiechn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SHIJIECHN/peacock/issues"
+  },
+  "homepage": "https://github.com/SHIJIECHN/peacock#readme",
+  "devDependencies": {
+    "es-dev-server": "^2.1.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "@types/node": "^18.11.11"
+  }
+}
