@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "npm run build & npm start",
-    "start": "es-dev-server --node-resolve",
+    "start": "es-dev-server --node-resolve --open /demo/ --watch ",
     "watch": "npm run build -- --watch",
     "build": "tsc"
   },
